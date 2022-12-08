@@ -1,6 +1,8 @@
 const express = require('express');
 const sMethods = require('./lib/strings');
 const nMethods = require('./lib/numbers');
+const bMethods = require('./lib/booleans');
+const aMethods = require('./lib/arrays');
 
 const app = express();
 
@@ -89,6 +91,55 @@ app.post('/numbers/remainder', (req, res) => {
     } else {
       res.json({ result: nMethods.remainder(num1, num2) });
     }
+  }
+});
+
+app.post('/booleans/negate', (req, res) => {
+  res.json({ result: bMethods.negate(req.body.value) });
+});
+
+app.post('/booleans/truthiness', (req, res) => {
+  res.json({ result: bMethods.truthiness(req.body.value) });
+});
+
+app.get('/booleans/is-odd/:num', (req, res) => {
+  const num = parseInt(req.params.num, 10);
+  if (Number.isNaN(num)) {
+    res.status(400).json({ error: 'Parameter must be a number.' });
+  } else {
+    res.json({ result: bMethods.isOdd(parseInt(num, 10)) });
+  }
+});
+
+app.get('/booleans/:string/starts-with/:char', (req, res) => {
+  if (req.params.char.length > 1) {
+    res.status(400).json({ error: 'Parameter "character" must be a single character.' });
+  } else {
+    res.json({ result: bMethods.startsWith(req.params.char, req.params.string) });
+  }
+});
+
+app.post('/arrays/element-at-index/:index', (req, res) => {
+  res.json({ result: aMethods.getNthElement(req.params.index, req.body.array) });
+});
+
+app.post('/arrays/to-string', (req, res) => {
+  res.json({ result: aMethods.arrayToCSVString(req.body.array) });
+});
+
+app.post('/arrays/append', (req, res) => {
+  res.json({ result: aMethods.addToArray2(req.body.value, req.body.array) });
+});
+
+app.post('/arrays/starts-with-vowel', (req, res) => {
+  res.json({ result: aMethods.elementsStartingWithAVowel(req.body.array) });
+});
+
+app.post('/arrays/remove-element', (req, res) => {
+  if (req.query.index > 0) {
+    res.json({ result: aMethods.removeNthElement2(req.query.index, req.body.array) });
+  } else {
+    res.json({ result: aMethods.removeNthElement2(0, req.body.array) });
   }
 });
 
